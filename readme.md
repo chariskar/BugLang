@@ -1,5 +1,5 @@
 ### This is not a serious project
-rather a joke language i made to learn rust, do not take it seriousely expect bugs Here's a draft README for your project:
+rather a joke language i made to learn rust, do not take it seriousely expect bugs:
 
 ---
 
