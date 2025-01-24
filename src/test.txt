@@ -1,3 +1,0 @@
-define variable x: number = 10;
-
-print "done";
