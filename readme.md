@@ -3,7 +3,7 @@ rather a joke language i made to learn rust, do not take it seriousely expect bu
 
 ---
 
-# Joke Language Interpreter (JLI)
+# BugLang
 
 **This is not a serious project.** It's a joke language I created to learn Rust. Expect bugs, incomplete features, and a whole lot of weirdness. 
 
