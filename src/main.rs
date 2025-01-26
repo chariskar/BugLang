@@ -6,7 +6,7 @@ use interpreter::Interpreter;
 
 fn main() {
     // Define the CLI arguments and subcommands
-    let matches = Command::new("My CLI Tool")
+    let matches = Command::new("BugLand")
         .version("1.0")
         .author("Charis charis.karametos@gmail.com")
         .arg(
