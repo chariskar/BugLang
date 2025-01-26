@@ -1,31 +1,41 @@
 mod utils;
 mod interpreter;
-use std::fs;
-fn main() -> std::io::Result<()> {
-    let file_path = "test.txt";
-    
-    // Read the entire file into a String
-    let contents = fs::read_to_string(file_path)?;
+use std::{fs,env};
+use clap::{Arg, Command};
+use interpreter::Interpreter;
 
-    Ok({})
-}
+fn main() {
+    // Define the CLI arguments and subcommands
+    let matches = Command::new("My CLI Tool")
+        .version("1.0")
+        .author("Charis charis.karametos@gmail.com")
+        .arg(
+            Arg::new("input")
+                .short('i')
+                .long("input")
+                .value_name("FILE")
+                .help("Sets an input file")
+                .required(false),  // Make it optional
+        )
+        .get_matches();
+    let arg = matches.args_present();
+    if !arg{
+        println!("This is the cli tool for bugland, cuase im bored")
+    } else {
+        let path = matches.get_one::<String>("input");
+        if let Some(path_str) = path {
+            let current_dir = env::current_dir().expect("Failed to get current directory");
+            let relative_path = current_dir.join(path_str); // `path_str` is a &String, which implements AsRef<Path>
 
-#[cfg(test)]
-mod tests {
-    use interpreter::Interpreter;
-    use super::*; // Import the main module and its contents
-    use std::fs;
-#[test]
-    fn test_interpreter_execution() {
-        // Prepare a temporary test file
-        let test_file_path = r"C:\Users\chari\Documents\GitHub\pseudolanguage\src\test.txt";
-
-        let interpreter =&mut Interpreter::new(); 
-
-        // Read and interpret the file
-        let contents = fs::read_to_string(test_file_path).expect("Failed to read test file");
-        interpreter.interpret(&contents);
-
-
+            if fs::metadata(&relative_path).is_ok() {
+                let interpreter =&mut Interpreter::new(); 
+                let contents = fs::read_to_string(path_str).expect("Failed to read test file");
+                interpreter.interpret(&contents);
+            } else {
+                panic!("File not found.");
+            }
+        } else {
+            panic!("No input file provided.");
+        }
     }
 }

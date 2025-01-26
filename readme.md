@@ -25,9 +25,9 @@ rather a joke language i made to learn rust, do not take it seriousely expect bu
    cd BugLang
    ```
 
-2. you just call the interpreter, too lazy to make a cli or anything else
+2. Write your programs in BugLang and watch them break (or maybe work?).
 
-3. Write your programs in BugLang and watch them break (or maybe work?).
+3. build the code and try it
 
 ## Contributing
 
