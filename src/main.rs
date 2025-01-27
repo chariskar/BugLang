@@ -30,7 +30,7 @@ fn main() {
     if !arg{
         println!("This is the cli tool for bugland, cuase im bored")
     } else {
-        if (let Some(input) = matches.get_one::<String>("input")){
+        if let Some(input) = matches.get_one::<String>("input"){
             let path = matches.get_one::<String>("input");
             if let Some(path_str) = path {
                 let current_dir = env::current_dir().expect("Failed to get current directory");
@@ -46,7 +46,7 @@ fn main() {
             } else {
                 panic!("No input file provided.");
             }
-        } else if (let Some(version) = matches.get_one::<String>("version")){
+        } else if let Some(version) = matches.get_one::<String>("version"){
             println!("Version 1.0.0")
         } 
     }
