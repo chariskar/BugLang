@@ -4,8 +4,8 @@ pub struct Variable {
 }
 #[derive(Debug)]
 pub enum Value {
-    Integer(i32),
-    Float(f32),
+    Integer(i64),
+    Float(f64),
     String(String),
     Boolean(bool),
 }
@@ -46,12 +46,12 @@ impl VarManager {
             if let Some(variable) = scope.get_mut(name) {
                 match &variable.Type {
                     Value::Integer(i) => {
-                        if let Ok(int_val) = new_value.clone().parse::<i32>() {
+                        if let Ok(int_val) = new_value.clone().parse::<i64>() {
                             variable.Type = Value::Integer(int_val);
                         }     
                     },
                     Value::Float(f) => {
-                        if let Ok(int_val) = new_value.clone().parse::<f32>() {
+                        if let Ok(int_val) = new_value.clone().parse::<f64>() {
                             variable.Type = Value::Float(int_val);
                         }                        },
                     Value::Boolean(b) => {},
@@ -77,12 +77,12 @@ impl VarManager {
 
     pub fn parse_value(&mut self,input: &str) -> Option<Value> {
         // Try parsing as an integer
-        if let Ok(int_val) = input.parse::<i32>() {
+        if let Ok(int_val) = input.parse::<i64>() {
             return Some(Value::Integer(int_val));
         }
         
         // Try parsing as a float
-        if let Ok(float_val) = input.parse::<f32>() {
+        if let Ok(float_val) = input.parse::<f64>() {
             return Some(Value::Float(float_val));
         }
 

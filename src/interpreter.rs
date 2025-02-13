@@ -60,30 +60,36 @@ impl Interpreter {
             }
         }
 
-        if let [
-            Token::StringLiteral(ref literal),
-            Token::Symbol(';')
-        ] = tokens_collected.as_slice() {
-            println!("{}", literal);
-        } else if let [
-            Token::Identifier(var_name),
-            Token::Symbol(';')
-        ] = tokens_collected.as_slice() {
-            if let Some(variable) = self.get_var(var_name.to_string().as_str()) {
-                // Match on the variable type to print the appropriate value
-                match &variable.Type {
-                    Value::Integer(i) => println!("{}", i),
-                    Value::Float(f) => println!("{}", f),
-                    Value::Boolean(b) => println!("{}", b),
-                    Value::String(s) => println!("{}", s),
+        match tokens_collected.as_slice() {
+            [value_token, Token::Symbol(';')] => {
+                match value_token {
+                    Token::StringLiteral(literal) => println!("{}", literal),
+                    Token::Identifier(var_name) => {
+                        if let Some(variable) = self.get_var(var_name) {
+                            match &variable.Type {
+                                Value::Integer(i) => println!("{}", i),
+                                Value::Float(f) => println!("{}", f),
+                                Value::Boolean(b) => println!("{}", b),
+                                Value::String(s) => println!("{}", s),
+                            }
+                        } else {
+                            panic!("Error: Undefined variable '{}'.", var_name);
+                        }
+                    }
+                    Token::Number(num) => println!("{}", num),
+                    Token::Float(f) => println!("{}", f),
+                    Token::Boolean(b) => println!("{}", b),
+
+                    
+                    _ => panic!("Error: invalid token type for print statement"),
                 }
-            } else {
-                panic!("Error: Undefined variable '{}'.", var_name);
             }
-        } else {
-            panic!("Error: invalid print syntax");
+            _ => {
+                panic!("Error: invalid print syntax");
+            }
         }
     }
+
 
 
     // DO NOT TOUCH, IDK HOW I MADE IT WORK 
@@ -197,7 +203,7 @@ impl Interpreter {
     where
         I: Iterator<Item = Token>,
     {
-        let mut left_operand: Option<i32> = None;
+        let mut left_operand: Option<i64> = None;
         let mut operator: Option<char> = None;
     
         // Parse the left operand
