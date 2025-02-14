@@ -1,5 +1,4 @@
 // TODO: Modularise the interpreter
-// NOTE: the interpreter doesnt allow for variables other than type int to be updated
 #![allow(unused)]
 use core::panic;
 use std::any::Any;
