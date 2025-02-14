@@ -18,7 +18,8 @@ pub struct VarManager {
 impl VarManager {
     pub fn new() -> Self {
         Self {
-            scopes: vec![HashMap::new()], // Start with a global scope
+            scopes: vec![
+                HashMap::new()], // Start with a global scope
         }
     }
 

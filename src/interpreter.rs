@@ -366,82 +366,65 @@ impl Interpreter {
                 break;
             }
         }
-        if let [
-            Token::Identifier(ref var_name),
-            Token::Symbol('+'),
-            Token::Symbol('+'),
-            Token::Symbol(';')
-        ] = tokens_collected.as_slice(){
-            if let Some(variable) = self.get_var(var_name) {
-                match &variable.Type {
-                    Value::Integer(i) => {
-                        let mut new_value = *i;
-                        new_value+=1;
-                        self.set_var(var_name, new_value.to_string().as_str());
-                    },
-                    _ => panic!("Invalid variable type"),
-                }
-            } else {
-                panic!("Tried updating a non existing variable")
-            }
-        } else if let [
-            Token::Identifier(ref var_name),
-            Token::Symbol('-'),
-            Token::Symbol('-'),
-            Token::Symbol(';')
-        ] = tokens_collected.as_slice(){
-            if let Some(variable) = self.get_var(var_name) {
-                match &variable.Type {
-                    Value::Integer(i) => {
-                        let mut new_value = *i;
-                        new_value-=1;
-                        self.set_var(var_name, new_value.to_string().as_str());
-                    },
-                    _ => panic!("Invalid variable type"),
-                }
-            } else {
-                panic!("Tried updating a non existing variable")
-            }
-        } else if let [
-            Token::Identifier(ref var_name),
-            Token::Symbol(ref operator ),
-            Token::Number(ref amount),
-            Token::Symbol(';')
-        ] = tokens_collected.as_slice(){
-            if ['+','-'].contains(operator){
-                if operator == &'-' {
-                    if let Some(variable) = self.get_var(var_name) {
-                        match &variable.Type {
-                            Value::Integer(i) => {
-                                let mut new_value = *i;
-                                new_value-=amount;
-                                self.set_var(var_name, new_value.to_string().as_str());
-                            },
-                            _ => panic!("Invalid variable type"),
 
-                        }
-                    } else {
-                        panic!("Tried updating a non existing variable")
+        match tokens_collected.as_slice() {
+            [Token::Identifier(var_name), Token::Symbol('+'), Token::Symbol('+'), Token::Symbol(';')] => {
+                if let Some(variable) = self.get_var(var_name) {
+                    match &variable.Type {
+                        Value::Integer(i) => {
+                            let new_value = *i + 1;
+                            self.set_var(var_name, new_value.to_string().as_str());
+                        },
+                        _ => panic!("Invalid variable type for increment"),
                     }
                 } else {
-                    if let Some(variable) = self.get_var(var_name) {
-                        match &variable.Type {
-                            Value::Integer(i) => {
-                                let mut new_value = *i;
-                                new_value+=amount;
-                                self.set_var(var_name, new_value.to_string().as_str());
-                            },
-                            _ => panic!("Invalid variable type"),
-                        }
-                    } else {
-                        panic!("Tried updating a non existing variable")
-                    }
+                    panic!("Tried updating a non-existing variable: {}", var_name);
                 }
-            }
-        } else {
-            panic!("Invalid variable update syntax")
+            },
+            [Token::Identifier(var_name), Token::Symbol('-'), Token::Symbol('-'), Token::Symbol(';')] => {
+                if let Some(variable) = self.get_var(var_name) {
+                    match &variable.Type {
+                        Value::Integer(i) => {
+                            let new_value = *i - 1;
+                            self.set_var(var_name, new_value.to_string().as_str());
+                        },
+                        _ => panic!("Invalid variable type for decrement"),
+                    }
+                } else {
+                    panic!("Tried updating a non-existing variable: {}", var_name);
+                }
+            },
+            [Token::Identifier(var_name), Token::Symbol(op), Token::Number(amount), Token::Symbol(';')] if *op == '+' || *op == '-' => {
+                if let Some(variable) = self.get_var(var_name) {
+                    match &variable.Type {
+                        Value::Integer(i) => {
+                            let mut new_value = *i;
+                            if *op == '+' {
+                                new_value += amount;
+                            } else {
+                                new_value -= amount;
+                            }
+                            self.set_var(var_name, new_value.to_string().as_str());
+                        },
+                        _ => panic!("Invalid variable type for arithmetic update"),
+                    }
+                } else {
+                    panic!("Tried updating a non-existing variable: {}", var_name);
+                }
+            },
+            [Token::Identifier(var_name), Token::Operator(op), value_token, Token::Symbol(';')] if op == "=" => {
+                let value_str = match value_token {
+                    Token::StringLiteral(s) => format!("\"{}\"", s), // Ensure string is quoted
+                    Token::Number(n) => n.to_string(),
+                    Token::Float(f) => f.to_string(),
+                    Token::Boolean(b) => b.to_string(),
+                    _ => panic!("Unsupported value type in update"),
+                };
+                self.set_var(var_name, &value_str);
+            },
+            _ => panic!("Invalid variable update syntax: {:?}", tokens_collected),
         }
-    }   
+    }
 
     fn handle_for<'a, I>(&mut self, tokens: &mut I)
     where

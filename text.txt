@@ -1,1 +1,4 @@
-print true;
+variable x = "Hi";
+print x;
+update x = "hello";
+print x;
