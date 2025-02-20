@@ -1,6 +1,6 @@
 #[derive(Debug,Clone)]
 pub struct Variable {
-    pub Type: Value,
+    pub Value: Value,
 }
 #[derive(Debug,Clone)]
 pub enum Value {
@@ -44,26 +44,25 @@ impl VarManager {
         // Iterate over scopes from innermost to outermost
         for scope in self.scopes.iter_mut().rev() {
             if let Some(variable) = scope.get_mut(name) {
-                match &variable.Type {
+                match &variable.Value {
                     Value::Integer(_i) => {
                         if let Ok(int_val) = new_value.parse::<i64>() {
-                            variable.Type = Value::Integer(int_val);
+                            variable.Value = Value::Integer(int_val);
                         }
                     }
                     Value::Float(_f) => {
                         if let Ok(float_val) = new_value.parse::<f64>() {
-                            variable.Type = Value::Float(float_val);
+                            variable.Value = Value::Float(float_val);
                         }
                     }
                     Value::Boolean(_b) => {
                         if let Ok(bool_val) = new_value.parse::<bool>(){
-                            variable.Type = Value::Boolean(bool_val)
+                            variable.Value = Value::Boolean(bool_val)
                         }
                     }
                     Value::String(_s) => {
-                        if let Ok(str_val) = new_value.parse::<String>(){
-                            variable.Type = Value::String(str_val)
-                        }
+                        // Directly assign the new string value.
+                        variable.Value = Value::String(new_value.to_string());
                     }
                 }
                 return Ok(()); // Successfully updated

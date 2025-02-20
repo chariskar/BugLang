@@ -63,7 +63,7 @@ impl Interpreter {
                 Token::StringLiteral(literal) => println!("{}", literal),
                 Token::Identifier(var_name) => {
                     if let Some(variable) = self.get_var(var_name) {
-                        match &variable.Type {
+                        match &variable.Value {
                             Value::Integer(i) => println!("{}", i),
                             Value::Float(f) => println!("{}", f),
                             Value::Boolean(b) => println!("{}", b),
@@ -208,7 +208,7 @@ impl Interpreter {
             match token {
                 Token::Identifier(var_name) => {
                     if let Some(var) = self.get_var(var_name.as_str()) {
-                        if let Value::Integer(i) = var.Type {
+                        if let Value::Integer(i) = var.Value {
                             left_operand = Some(i);
                         } else {
                             return None;
@@ -319,25 +319,25 @@ impl Interpreter {
             match self.var_manager.parse_value(value) {
                 Some(Value::Integer(i)) => {
                     let variable = Variable {
-                        Type: Value::Integer(i),
+                        Value: Value::Integer(i),
                     };
                     self.var_manager.define(var_name.to_string(), variable);
                 }
                 Some(Value::Float(f)) => {
                     let variable = Variable {
-                        Type: Value::Float(f),
+                        Value: Value::Float(f),
                     };
                     self.var_manager.define(var_name.to_string(), variable);
                 }
                 Some(Value::Boolean(b)) => {
                     let variable = Variable {
-                        Type: Value::Boolean(b),
+                        Value: Value::Boolean(b),
                     };
                     self.var_manager.define(var_name.to_string(), variable);
                 }
                 Some(Value::String(s)) => {
                     let variable = Variable {
-                        Type: Value::String(s),
+                        Value: Value::String(s),
                     };
                     self.var_manager.define(var_name.to_string(), variable);
                 }
@@ -362,7 +362,7 @@ impl Interpreter {
             // Increment operator (++)
             [Token::Identifier(var_name), Token::Symbol('+'), Token::Symbol('+'), Token::Symbol(';')] => {
                 if let Some(variable) = self.get_var(var_name).cloned() {
-                    match &variable.Type {
+                    match &variable.Value {
                         Value::Integer(i) => self.set_var(var_name, &(*i + 1).to_string()),
                         Value::Float(f) => self.set_var(var_name, &(*f + 1.0).to_string()),
                         _ => panic!("Invalid variable type for increment"),
@@ -374,7 +374,7 @@ impl Interpreter {
             // Decrement operator (--)
             [Token::Identifier(var_name), Token::Symbol('-'), Token::Symbol('-'), Token::Symbol(';')] => {
                 if let Some(variable) = self.get_var(var_name).cloned() {
-                    match &variable.Type {
+                    match &variable.Value {
                         Value::Integer(i) => self.set_var(var_name, &(*i - 1).to_string()),
                         Value::Float(f) => self.set_var(var_name, &(*f - 1.0).to_string()),
                         _ => panic!("Invalid variable type for decrement"),
@@ -388,7 +388,7 @@ impl Interpreter {
             if *op == '+' || *op == '-' =>
                 {
                     if let Some(variable) = self.get_var(var_name).clone() {
-                        match &variable.Type {
+                        match &variable.Value {
                             Value::Integer(i) => {
                                 let new_value = if *op == '+' { *i + amount } else { *i - amount };
                                 self.set_var(var_name, &new_value.to_string());
@@ -407,7 +407,7 @@ impl Interpreter {
             if *op == '+' || *op == '-' =>
                 {
                     if let Some(variable) = self.get_var(var_name).clone() {
-                        match &variable.Type {
+                        match &variable.Value {
                             Value::Float(f) => {
                                 let new_value = if *op == '+' { *f + amount } else { *f - amount };
                                 self.set_var(var_name, &new_value.to_string());
@@ -425,7 +425,7 @@ impl Interpreter {
                     let value_str = match value_token {
                         Token::Number(n) => n.to_string(),
                         Token::Float(f) => f.to_string(),
-                        Token::StringLiteral(s) => format!("\"{}\"", s), // Ensure strings are quoted
+                        Token::StringLiteral(s) => s.to_string(), // Ensure strings are quoted
                         Token::Boolean(b) => b.to_string(),
                         _ => panic!("Unsupported value type in assignment"),
                     };
@@ -533,7 +533,7 @@ impl Interpreter {
                 if op == "=" =>
             {
                 if let Some(existing_value) = self.get_var(var.clone().as_str()) {
-                    if let Value::Integer(existing_int) = existing_value.Type {
+                    if let Value::Integer(existing_int) = existing_value.Value {
                         self.set_var(var, (existing_int + value).to_string().as_str());
                     } else {
                         panic!("Variable {} is not an integer", var);
