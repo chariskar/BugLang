@@ -7,7 +7,7 @@ pub enum Token {
     StringLiteral(String),
     Operator(String),
     Float(f64),
-    Boolean(bool)
+    Boolean(bool),
 }
 
 pub struct Tokenizer;
@@ -30,14 +30,17 @@ impl Tokenizer {
                             break;
                         }
                     }
-                    if ["if", "else", "while", "and", "or", "not", "for"].contains(&identifier.as_str()){
+                    if ["if", "else", "while", "and", "or", "not", "for"]
+                        .contains(&identifier.as_str())
+                    {
                         tokens.push(Token::Identifier(identifier));
-                    } else if ["print", "variable", "while", "update"].contains(&identifier.as_str()){
+                    } else if ["print", "variable", "while", "update"]
+                        .contains(&identifier.as_str())
+                    {
                         tokens.push(Token::Keyword(identifier));
-                    } else if ["true", "false"].contains(&identifier.as_str()){
+                    } else if ["true", "false"].contains(&identifier.as_str()) {
                         tokens.push(Token::Boolean(identifier.parse().unwrap()));
-                    }
-                    else {
+                    } else {
                         tokens.push(Token::Identifier(identifier));
                     }
                 }
@@ -123,9 +126,9 @@ impl Tokenizer {
                     }
                 }
                 _ if c.is_whitespace() => {
-                    chars.next(); 
+                    chars.next();
                 }
-               
+
                 _ => {
                     panic!("Unexpected character: {}", c);
                 }

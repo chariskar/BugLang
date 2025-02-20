@@ -21,7 +21,7 @@ rather a joke language i made to learn rust, do not take it seriousely expect bu
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/BugLang.git
+   git clone https://github.com/chariskar/BugLang.git
    cd BugLang
    ```
 

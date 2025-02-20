@@ -1,4 +1,4 @@
-variable x = "Hi";
+variable x = false;
 print x;
-update x = "hello";
+update x = true;
 print x;

@@ -1,15 +1,15 @@
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct Variable {
     pub Type: Value,
 }
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub enum Value {
     Integer(i64),
     Float(f64),
     String(String),
     Boolean(bool),
 }
-use std::{any, collections::HashMap};
+use std::collections::HashMap;
 
 pub struct VarManager {
     scopes: Vec<HashMap<String, Variable>>,
@@ -18,8 +18,7 @@ pub struct VarManager {
 impl VarManager {
     pub fn new() -> Self {
         Self {
-            scopes: vec![
-                HashMap::new()], // Start with a global scope
+            scopes: vec![HashMap::new()], // Start with a global scope
         }
     }
 
@@ -46,17 +45,26 @@ impl VarManager {
         for scope in self.scopes.iter_mut().rev() {
             if let Some(variable) = scope.get_mut(name) {
                 match &variable.Type {
-                    Value::Integer(i) => {
-                        if let Ok(int_val) = new_value.clone().parse::<i64>() {
+                    Value::Integer(_i) => {
+                        if let Ok(int_val) = new_value.parse::<i64>() {
                             variable.Type = Value::Integer(int_val);
-                        }     
-                    },
-                    Value::Float(f) => {
-                        if let Ok(int_val) = new_value.clone().parse::<f64>() {
-                            variable.Type = Value::Float(int_val);
-                        }                        },
-                    Value::Boolean(b) => {},
-                    Value::String(s) => {},
+                        }
+                    }
+                    Value::Float(_f) => {
+                        if let Ok(float_val) = new_value.parse::<f64>() {
+                            variable.Type = Value::Float(float_val);
+                        }
+                    }
+                    Value::Boolean(_b) => {
+                        if let Ok(bool_val) = new_value.parse::<bool>(){
+                            variable.Type = Value::Boolean(bool_val)
+                        }
+                    }
+                    Value::String(_s) => {
+                        if let Ok(str_val) = new_value.parse::<String>(){
+                            variable.Type = Value::String(str_val)
+                        }
+                    }
                 }
                 return Ok(()); // Successfully updated
             }
@@ -64,24 +72,14 @@ impl VarManager {
         // If the variable is not found, return an error
         Err(format!("Undefined variable `{}`", name))
     }
-    
 
-    // Add a new scope (e.g., for a function or block)
-    pub fn push_scope(&mut self) {
-        self.scopes.push(HashMap::new());
-    }
 
-    // Remove the innermost scope
-    pub fn pop_scope(&mut self) {
-        self.scopes.pop();
-    }
-
-    pub fn parse_value(&mut self,input: &str) -> Option<Value> {
+    pub fn parse_value(&mut self, input: &str) -> Option<Value> {
         // Try parsing as an integer
         if let Ok(int_val) = input.parse::<i64>() {
             return Some(Value::Integer(int_val));
         }
-        
+
         // Try parsing as a float
         if let Ok(float_val) = input.parse::<f64>() {
             return Some(Value::Float(float_val));

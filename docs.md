@@ -150,4 +150,3 @@ print "Done!";
 Done!
 ```
 
-### Note: the only variables you can update rn are integers and it has to be done using: update varName++/--/+=/-=
